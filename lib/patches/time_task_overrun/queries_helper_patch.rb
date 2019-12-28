@@ -38,24 +38,19 @@ module TimeTaskOverrun
           when :spent_hours
             link_to_if(value > 0, format_hours(value), project_time_entries_path(item.project, :issue_id => "#{item.id}"))
           when :total_spent_hours
-            value = (value.to_i == value ? value.to_i : value)
-            if item.total_spent_hours
-              link =  project_time_entries_path(item.project, :issue_id => "#{item.id}")
-              val =            (if (item.estimated_hours.nil? || item.total_spent_hours.nil?)
-                                  0
-                                else
-                                  res = (item.estimated_hours - item.total_spent_hours) * -1
-                                  if res.to_i == res
-                                    res.to_i
-                                  else
-                                    res
-                                  end
-                                end)
+            if item.estimated_hours.to_i > 0 && item.total_spent_hours.to_i > 0
+              link =  project_time_entries_path(item.project, :issue_id => "~#{item.id}")
+              val =           (if (item.estimated_hours.nil? || item.total_spent_hours.nil?)
+                                0
+                              else
+                                (item.estimated_hours - item.total_spent_hours) * -1
+                              end)
               link_to(format_hours(value), link) +
-                                                     if val > 0
-                                                       (link_to(' (+' + "#{val}" + ')', link, style: 'color:#cc0000', ) if val > 0)
-                                                      # link_to_if(val > 0, ' ('+ (val > 0  ? '+' : '') + format_hours(val) + ')', link, style: (val < 0 ? '' : 'color:#cc0000'))
-                                                     end
+                  if val != 0
+                    link_to('('+ (val > 0  ? '+' : '') + format_hours(val) + ')', link, style: (val < 0 ? 'color:#00cc00' : 'color:#cc0000'))
+                  end
+            else
+              label_tag(:message, "нет данных")
             end
           when :attachments
             value.to_a.map { |a| format_object(a) }.join(" ").html_safe
@@ -63,6 +58,31 @@ module TimeTaskOverrun
             format_object(value)
           end
         end
+
+
+        # отел так, но...
+        #right sign
+        # def overrun_time(item)
+        #   if (item.estimated_hours.nil? || item.total_spent_hours.nil?)
+        #     return 0
+        #   else
+        #     return (item.estimated_hours - item.total_spent_hours) * -1
+        #   end
+        # end
+        #
+        # #null data processing
+        # def link_data_columns(item, value)
+        #   if item.estimated_hours.to_i > 0 && item.total_spent_hours.to_i > 0
+        #     link =  project_time_entries_path(item.project, :issue_id => "~#{item.id}")
+        #     val = overrun_time(item)
+        #     link_to(format_hours(value), link) +
+        #         if val != 0
+        #           link_to('('+ (val > 0  ? '+' : '') + format_hours(val) + ')', link, style: (val < 0 ? 'color:#00cc00' : 'color:#cc0000'))
+        #         end
+        #   else
+        #     label_tag(:message, "нет данных")
+        #   end
+        # end
 
       end
     end

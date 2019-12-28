@@ -7,8 +7,3 @@ with the time that was specified during the assessment
 Go to plugins folder
 and
 #### git clone https://github.com/IkegzI/test_task_plugin_for_redmine
-
-If redmine errors?
-if redmine shows errors? try: git clone https://github.com/IkegzI/test_task_plugin -b apache_2
-
-Name folder with plugin - "test_task_plugin"
