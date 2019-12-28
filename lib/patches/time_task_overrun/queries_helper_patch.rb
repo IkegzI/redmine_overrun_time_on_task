@@ -40,22 +40,23 @@ module TimeTaskOverrun
           when :total_spent_hours
             value = (value.to_i == value ? value.to_i : value)
             if item.total_spent_hours
-              link =  project_time_entries_path(item.project, :issue_id => "#{item.id}")
-              val =            (if (item.estimated_hours.nil? || item.total_spent_hours.nil?)
-                                  0
-                                else
-                                  res = (item.estimated_hours - item.total_spent_hours) * -1
-                                  if res.to_i == res
-                                    res.to_i
-                                  else
-                                    res
-                                  end
-                                end)
-              link_to(format_hours(value), link) +
-                                                     if val > 0
-                                                       (link_to(' (+' + "#{val}" + ')', link, style: 'color:#cc0000', ) if val > 0)
-                                                      # link_to_if(val > 0, ' ('+ (val > 0  ? '+' : '') + format_hours(val) + ')', link, style: (val < 0 ? '' : 'color:#cc0000'))
-                                                     end
+              link = project_time_entries_path(item.project, :issue_id => "#{item.id}")
+              val = (
+              if (item.estimated_hours.nil? || item.total_spent_hours.nil?)
+                0
+              else
+                res = (item.estimated_hours - item.total_spent_hours) * -1
+                if res.to_i == res
+                  res.to_i
+                else
+                  res
+                end
+              end)
+              if value > 0
+                link_to(format_hours(value), link) +
+                    (link_to(' (+' + "#{val}" + ')', link, style: 'color:#cc0000',) if val > 0)
+                # link_to_if(val > 0, ' ('+ (val > 0  ? '+' : '') + format_hours(val) + ')', link, style: (val < 0 ? '' : 'color:#cc0000')
+              end
             end
           when :attachments
             value.to_a.map { |a| format_object(a) }.join(" ").html_safe
